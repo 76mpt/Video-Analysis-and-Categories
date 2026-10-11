@@ -1,0 +1,10 @@
+[project]
+name = "vsort"
+version = "0.1.0"
+description = "Local AI video library organizer"
+requires-python = ">=3.12"
+dependencies = ["pyyaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "tests"]

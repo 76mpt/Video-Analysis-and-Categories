@@ -1,0 +1,108 @@
+# vsort settings. Relative paths are resolved against the folder this file is in.
+# Changes take effect on the next run; no code changes needed.
+
+# Sorting root (the simplest setup; "Change…" on the web home page edits this line):
+#   <root>\sorting\01_Inbox … 05_Review hold videos being sorted plus logs, and finished
+#   creator folders go directly under the root, e.g. D:\Videos\<Creator>\…
+#   When set, workspace_dir and library_dir below are ignored. Leave empty to use those two.
+root_dir:
+
+# Workspace for folders 01, 02, 03, 05 and logs (used only when root_dir is empty)
+workspace_dir: Workspace
+
+# Final library. Empty = Workspace\04_Final_Library.
+# Can be on any drive, e.g. D:\Library. Cross-drive moves copy, verify, then delete the source.
+library_dir:
+
+# Dictionary folder (CSV files for works, characters and creator aliases; editable in Excel)
+dictionary_dir: dict
+
+# Stage folder names
+folders:
+  inbox: 01_Inbox
+  staging: 02_Parsed_Staging
+  ai: 03_AI_Workspace
+  identify: Identify_Queue      # under 03_AI_Workspace
+  refine: Refine_Queue          # under 03_AI_Workspace
+  library: 04_Final_Library
+  review: 05_Review
+  sorting: sorting              # subfolder of root_dir holding videos being sorted
+  logs: _logs                   # journal of every applied run (used for undo)
+  reports: _reports             # dry-run plans (CSV, opens in Excel)
+
+# File extensions treated as videos
+video_extensions: [.mp4, .mkv, .webm, .mov, .avi, .wmv, .flv, .m4v, .ts, .mpg, .mpeg, .3gp]
+
+# Partial downloads are always skipped
+temp_extensions: [.part, .crdownload, .tmp, .download, .opdownload, .!qb, .!ut, .bc!, .aria2, .xltd]
+
+# Files modified within this many seconds may still be being written and are skipped
+min_file_age_seconds: 60
+
+# Folder names (case-insensitive) skipped entirely when sampling for labeling and re-evaluation
+skip_folders: []
+
+naming:
+  # Maximum filename length (without extension); longer names are truncated
+  max_name_length: 180
+  # Maximum full path length (the Windows default limit is about 260)
+  max_path_length: 250
+  # How to handle characters Windows does not allow (\ / : * ? " < > |):
+  #   fullwidth  = replace with full-width equivalents, keeping the meaning
+  #   underscore = replace with _
+  illegal_char_style: fullwidth
+
+web:
+  # Folders shown first on the web home page (vsort web)
+  start_dirs: []
+
+ingest:
+  # How picked videos enter 01_Inbox: move, or copy (keeps the originals)
+  mode: move
+  # When a whole folder is picked, keep its name and subfolder structure inside the Inbox
+  # (folder names often carry creator or work information used later by the parser)
+  keep_folder_structure: true
+
+parser:
+  # Folder names that are not creators (the first Inbox folder level is treated as the creator).
+  # Regular expressions, case-insensitive. Empty = built-in list (unsorted, plain numbers, dates, …).
+  generic_folders:
+  # Filename keyword hints per category, as regular expressions; order = priority. Example:
+  #   category_hints:
+  #     Mix: ['dance mix']
+  #     Dance: ['dance only']
+  # Empty = built-in Dance hints only. Hints are a prior; the AI makes the final call.
+  category_hints:
+
+lookup:
+  # Look up title, creator and tags on the source site using IDs found in filenames
+  enabled: true
+  # Minimum seconds between two requests to the same site
+  min_interval_seconds: 1.0
+  # Fall back to third-party archive mirrors when public data is not enough; update the domain if it changes
+  use_kemono: true
+  kemono_domain: kemono.cr
+  # Site logins and cookies go in secrets.yaml (git-ignored); see secrets.example.yaml for the format
+
+ai:
+  # Local models (swappable); downloaded to models\ on first use
+  model: pixai-labs/pixai-tagger-v1.0   # character and visual tags
+  category_model: combined      # category (Dance / Mix / Scene): combined = tags + Qwen3-VL (trained on your labels), qwen3vl, tags
+  category_sure_prob: 0.7       # combined: the top category probability must reach this to auto-file (251-video validation: 0.8 -> 0.7 raised auto-filing 52% -> 62% at 90% accuracy)
+  author_prior_weight: 0.5      # creator prior: category probabilities are multiplied by the creator's past category distribution to this power; 0 = off (251-video validation: 0.5 raised auto-filing 80% -> 87% at 90% accuracy)
+  category_second_stage: true   # run the second-stage per-frame prompt only when the category is uncertain (about half of videos, ~10 s each)
+  style_model: trained          # animation style (multi-label): trained = small SigLIP classifier trained on your labels; or openai/clip-vit-large-patch14 or google/siglip2-so400m-patch14-384 (zero-shot)
+  describe_model: none          # optional describer: none, qwen3vl, joycaption; used only on likely misclassifications, as a second opinion with a text description
+  frames: 16                    # keyframes sampled per video
+  scene_frame_threshold: 0.45   # tag score at which a single frame counts as Scene
+  dance_max_ratio: 0.10         # Scene-frame ratio <= this -> Dance
+  scene_min_ratio: 0.70         # >= this -> Scene; in between -> Mix
+  border_margin: 0.03           # ratios this close to a threshold are flagged as possible misclassifications
+  character_threshold: 0.50     # character presence threshold
+  character_sure: 0.85          # character confidence needed to count as certain
+  style_sure: 0.70              # animation style probability needed to count as certain
+
+reverse_search:
+  # Reverse image search: when the creator is unknown, send one frame to SauceNAO; needs saucenao.api_key in secrets.yaml
+  enabled: false
+  min_similarity: 70

@@ -1,0 +1,3 @@
+# One tagger label per line. Frames scoring high on any of these labels count as Scene.
+# Copy to scene_tags.txt (git-ignored) and fill in the labels that match your own category definition.
+scene_tag

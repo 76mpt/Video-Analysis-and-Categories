@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# Workspace (videos, logs, dry-run plans)
+Workspace/
+models/
+# Credentials and cookies
+secrets.yaml
+_e2e/
+# Local data: labels, pending aliases, and local overrides of the shipped *.example.txt files
+dict/style_labels.csv
+dict/authors_pending.csv
+dict/*.txt
+!dict/*.example.txt
+prompts/*.txt
+!prompts/*.example.txt

@@ -1,0 +1,1 @@
+Above are {n} frames, numbered in time order, from one anime-style video (anime or 3D models). For EACH frame decide one letter: D = dancing or posing; S = Scene content as defined by your labeling guide; O = other (title card, text, talking, static scene). Answer with JSON only, exactly {n} letters in order, like {{"frames": ["D","S","O", ...]}}.

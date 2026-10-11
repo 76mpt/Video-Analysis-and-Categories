@@ -1,0 +1,1 @@
+Write a long descriptive caption for this image. It is a grid of {n} frames taken in order from one anime-style video. Describe the characters, what they are doing, and whether it looks like MikuMikuDance (MMD), other 3D CG, or 2D hand-drawn animation.
